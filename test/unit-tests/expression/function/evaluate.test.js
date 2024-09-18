@@ -84,4 +84,20 @@ describe('evaluate', function () {
     assert.strictEqual(expr1.toTex(), '\\mathrm{evaluate}\\left( expr\\right)')
     assert.strictEqual(expr2.toTex(), '\\mathrm{evaluate}\\left( expr, scope\\right)')
   })
+
+  it('should evaluate an expression with negative symbol an in unit or in operator', function () {
+    assert.deepStrictEqual(math.format(math.evaluate('-(5in^2)in cm^2'), 6), new Unit(-32.258, 'cm^2').toString())
+    assert.deepStrictEqual(
+      math.evaluate('-5in^2').toString(),
+      new Unit(-5, 'in^2').toString()
+    )
+    assert.deepStrictEqual(math.evaluate('+5in^2').toString(), new Unit(5, 'in^2').toString())
+    assert.deepStrictEqual(math.evaluate('+5in^3').toString(), new Unit(5, 'in^3').toString())
+    assert.deepStrictEqual(math.format(math.evaluate('-5in^2 in cm^2'), 6), new Unit(-32.258, 'cm^2').toString())
+    assert.deepStrictEqual(math.format(math.evaluate('-(5in^2)in cm^2'), 6), new Unit(-32.258, 'cm^2').toString())
+    assert.deepStrictEqual(math.format(math.evaluate('-3m^2 in in^2'), 6), new Unit(-4650.01, 'in^2').toString())
+    const scope = createMap()
+    math.evaluate('d=-5in^2', scope)
+    assert.deepStrictEqual(math.evaluate('d', scope).toString(), new Unit(-5, 'in^2').toString())
+  })
 })
